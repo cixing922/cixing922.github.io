@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能金融服务指南</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+		body {
+            background-color: #f4f4f4;
+        }
+        /* 调整服务卡片样式 */
+        .service-card {
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #ffffff, #fcfcfc);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+            margin-bottom: 1rem;
+            padding: 2.5rem 0.5rem 0.5rem 1rem !important;
+        }
+
+        .service-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 调整图标容器样式 */
+        .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a8a4e6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -30px auto 15px;
+            position: relative;
+            box-shadow: 0 3px 9px rgba(108, 92, 231, 0.3);
+        }
+
+        /* 调整图标样式 */
+        .service-icon {
+            font-size: 2rem;
+            color: white;
+        }
+
+        /* 调整语音按钮样式 */
+        .voice-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            background: rgba(108, 92, 231, 0.1);
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .voice-btn:hover {
+            background: rgba(108, 92, 231, 0.2);
+            transform: rotate(15deg);
+        }
+
+        .voice-btn.active {
+            background: #6c5ce7;
+            color: white;
+        }
+		
+		/* 新增视频按钮样式 */
+        .video-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            background: rgba(255, 100, 100, 0.1); /* 红色背景 */
+            border: none;
+            transition: all 0.3s;
+            margin-left: 10px; /* 与语音按钮间隔 */
+        }
+
+        .video-btn:hover {
+            background: rgba(255, 100, 100, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* 调整标题样式 */
+        h4 {
+            color: #2d3436;
+            position: relative;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: #6c5ce7;
+            border-radius: 2px;
+        }
+
+        /* 调整段落样式 */
+        p {
+            font-size: 1rem;
+        }
+		.text-secondary{color:#000 !important;}
+		.text-muted{color:#333 !important;}
+
+        /* 调整徽章样式 */
+        .badge {
+            font-size: 1rem;
+			color:#009900;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <h2 class="text-center mb-5 display-5 fw-bold"><i class="bi bi-stars me-2"></i>智慧金融服务站</h2>
+
+        <div class="row g-4">
+            <!-- e支付 -->
+            <div class="col-md-4">
+                <div class="service-card p-4 pt-5">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-phone service-icon"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4>e支付</h4>
+                        <p class="text-secondary mb-4">
+                            📱 您的手机变身智能钱包！<br>
+                            • 扫码支付快如闪电<br>
+                            • 自动记账清晰明了<br>
+                            • 限额设置守护资金<br>
+                            <small class="text-muted">🔐 指纹/面容验证更安全</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-purple">推荐新手使用</span>
+                            <div class="d-flex">
+                                <button class="voice-btn" onclick="speak(this)">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                                <a href="http://baike.baidu.com/l/jXuSudBR" class="video-btn"> <!-- 这里的href请替换为实际视频链接 -->
+                                    <i class="bi bi-youtube"></i> <!-- 使用YouTube图标作为示例 -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 养老金融 -->
+            <div class="col-md-4">
+                <div class="service-card p-4 pt-5">
+                    <div class="icon-wrapper" style="background: linear-gradient(135deg, #00b894 0%, #55efc4 100%);">
+                        <i class="bi bi-piggy-bank service-icon"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 style="--accent-color: #00b894;">养老金融</h4>
+                        <p class="text-secondary mb-4">
+                            🌳 种下今天的树苗，收获明天的绿荫<br>
+                            • 每月自动存钱计划<br>
+                            • 收益比普通存款高30%<br>
+                            • 灵活调整投资组合<br>
+                            <small class="text-muted">💡 急需用钱可部分提取</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-green">长期增值</span>
+                            <div class="d-flex">
+                                <button class="voice-btn" onclick="speak(this)">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                                <a href="http://baike.baidu.com/l/CW2TvOlq" class="video-btn"> <!-- 这里的href请替换为实际视频链接 -->
+                                    <i class="bi bi-youtube"></i> <!-- 使用YouTube图标作为示例 -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 信用卡还款 -->
+            <div class="col-md-4">
+                <div class="service-card p-4 pt-5">
+                    <div class="icon-wrapper" style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);">
+                        <i class="bi bi-credit-card service-icon"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 style="--accent-color: #ff7675;">信用卡管家</h4>
+                        <p class="text-secondary mb-4">
+                            📅 您的智能还款助手<br>
+                            • 自动提醒还款日期<br>
+                            • 一键绑定自动还款<br>
+                            • 分期计算轻松管理<br>
+                            <small class="text-muted">📊 新增消费分类统计</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-pink">热门服务</span>
+                            <div class="d-flex">
+                                <button class="voice-btn" onclick="speak(this)">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                                <a href="https://www.iqiyi.com/w_19rs6nv01d.html?method=run_app&vfrm=pcw_album_auto" class="video-btn"> <!-- 这里的href请替换为实际视频链接 -->
+                                    <i class="bi bi-youtube"></i> <!-- 使用YouTube图标作为示例 -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 环球通 -->
+            <div class="col-md-4">
+                <div class="service-card p-4 pt-5">
+                    <div class="icon-wrapper" style="background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);">
+                        <i class="bi bi-globe service-icon"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 style="--accent-color: #0984e3;">环球通</h4>
+                        <p class="text-secondary mb-4">
+                            🌍 全球消费无国界<br>
+                            • 多币种自动转换<br>
+                            • 免货币转换费<br>
+                            • 实时汇率提醒<br>
+                            <small class="text-muted">🛫 境外消费返现1%</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-blue">跨境首选</span>
+                            <div class="d-flex">
+                                <button class="voice-btn" onclick="speak(this)">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                                <a href="https://www.bilibili.com/video/BV12w411d7i1/?share_source=copy_web&vd_source=82cdecfb4ec8a2b9b0fb0bba2ac65575" class="video-btn"> <!-- 这里的href请替换为实际视频链接 -->
+                                    <i class="bi bi-youtube"></i> <!-- 使用YouTube图标作为示例 -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增：理财产品 -->
+            <div class="col-md-4">
+                <div class="service-card p-4 pt-5">
+                    <div class="icon-wrapper" style="background: linear-gradient(135deg, #e17055 0%, #fab1a0 100%);">
+                        <i class="bi bi-graph-up service-icon"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 style="--accent-color: #e17055;">理财产品</h4>
+                        <p class="text-secondary mb-4">
+                            📈 多元化理财选择<br>
+                            • 低风险稳健收益<br>
+                            • 专业团队精准把控<br>
+                            • 灵活期限任您挑选<br>
+                            <small class="text-muted">💰 开启财富增值之旅</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-orange">收益可观</span>
+                            <div class="d-flex">
+                                <button class="voice-btn" onclick="speak(this)">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                                <a href="https://www.bilibili.com/video/BV15p4y147b6/?share_source=copy_web&vd_source=82cdecfb4ec8a2b9b0fb0bba2ac65575" class="video-btn"> <!-- 这里的href请替换为实际视频链接 -->
+                                    <i class="bi bi-youtube"></i> <!-- 使用YouTube图标作为示例 -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增：保险服务 -->
+            <div class="col-md-4">
+                <div class="service-card p-4 pt-5">
+                    <div class="icon-wrapper" style="background: linear-gradient(135deg, #00cec9 0%, #81ecec 100%);">
+                        <i class="bi bi-shield-check service-icon"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 style="--accent-color: #00cec9;">保险服务</h4>
+                        <p class="text-secondary mb-4">
+                            🛡️ 全方位风险保障<br>
+                            • 人寿、健康、财产险一应俱全<br>
+                            • 个性化方案量身定制<br>
+                            • 快速理赔服务贴心<br>
+                            <small class="text-muted">🤗 为您和家人保驾护航</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-teal">安心之选</span>
+                            <div class="d-flex">
+                                <button class="voice-btn" onclick="speak(this)">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                                <a href="http://baike.baidu.com/l/Tw6wv9dY" class="video-btn"> <!-- 这里的href请替换为实际视频链接 -->
+                                    <i class="bi bi-youtube"></i> <!-- 使用YouTube图标作为示例 -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 保留之前的语音脚本 -->
+    <script>
+        let currentSpeech = null;
+
+        function speak(button) {
+            // 这里代码有误，原代码中没有.explain-text类，修改为选择p标签
+            const text = button.closest('.service-card').querySelector('p').innerText;
+            const icon = button.querySelector('i');
+
+            if (currentSpeech && !currentSpeech.paused) {
+                currentSpeech.pause();
+                icon.classList.replace('bi-pause', 'bi-play-fill');
+                button.classList.remove('active');
+                currentSpeech = null;
+                return;
+            }
+
+            if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance();
+                utterance.text = text;
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+
+                utterance.onstart = () => {
+                    button.classList.add('active');
+                    icon.classList.replace('bi-play-fill', 'bi-pause');
+                };
+
+                utterance.onend = utterance.onerror = () => {
+                    button.classList.remove('active');
+                    icon.classList.replace('bi-pause', 'bi-play-fill');
+                };
+
+                speechSynthesis.cancel();
+                speechSynthesis.speak(utterance);
+                currentSpeech = speechSynthesis;
+            } else {
+                alert('您的浏览器暂不支持语音朗读功能，建议使用最新版Chrome浏览器');
+            }
+        }
+    </script>
+</body>
+
+</html>

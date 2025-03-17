@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银发语音助手</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- 其他样式应放在图标库之后 -->
+    <link href="bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap/all.min.css" rel="stylesheet">
+    <style>
+		/* 添加字体定义确保图标显示 */
+        @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 900;
+            font-display: block;
+            src: url("https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2") format("woff2");
+        }
+
+		:root {
+			--main-color: #388E3C; /* 更柔和的绿色 */
+			--secondary-color: #A5D6A7;
+			--accent-color: #FFB74D; /* 新增强调色 */
+		}
+        body {
+            background: linear-gradient(135deg, #f0f9eb 0%, #e8f5e9 100%);
+            min-height: 100vh;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .header {
+                background: var(--main-color);
+    color: white;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+		.header h1 {
+			font-size: 1.8rem; /* 原2rem */
+			margin-bottom: 0.5rem;
+		}
+		.header p {
+			margin-bottom: 0;
+		}
+
+        .mic-btn {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: var(--main-color);
+            box-shadow: 0 6px 12px rgba(46,125,50,0.3);
+            transition: all 0.3s;
+            border: 4px solid white;
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.05);
+        }
+
+/*服务指南*/
+.service-section {
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.service-section h3 {
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.service-card {
+    background: white;
+    border-radius: 15px;
+    padding: 5px;
+    margin: 0px;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: none;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.service-card i {
+    font-size: 2rem !important;
+    margin-bottom: 10px;
+    color: #007bff; /* 修改图标颜色 */
+}
+
+.service-card h4 {
+    font-size: 1.1rem !important;
+    color: #333;
+    font-weight: 600;
+    text-transform: capitalize; /* 首字母大写 */
+}
+
+.service-card .btn {
+    padding: 3px 10px;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    background: linear-gradient(145deg, var(--main-color), var(--secondary-color));
+    color: white;
+    border: none;
+    transition: all 0.3s;
+}
+
+.service-card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 新增按钮样式，缩小尺寸 */
+.service-card button {
+    padding: 3px 10px;
+    font-size: 0.8rem;
+}
+
+        .result-box {
+            min-height: 200px;
+            background: white;
+            border-radius: 20px;
+            font-size: 20px;
+            line-height: 1.6;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 10px;
+			margin-bottom:10px;
+        }
+		.alert {
+		padding: 7px;
+		margin-bottom: 7px;
+		}
+
+        .help-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--main-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        /* 修改后的按钮容器定位 */
+.button-container {
+    position: relative;
+    display: inline-block;
+    width: 120px;  /* 与按钮同宽 */
+    height: 120px; /* 与按钮同高 */
+}
+
+/* 修正后的圆圈动画 */
+.circle-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 4px solid rgba(46,125,50,0.3);
+    border-radius: 50%;
+    animation: pulse 1.2s ease-out forwards;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+/* 修正后的音符定位 */
+.notes-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    top: 0;
+    left: 0;
+}
+
+.note {
+    position: absolute;
+    bottom: 50%;  /* 从按钮中心开始 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: var(--main-color);
+    border-radius: 50%;
+    animation: float 1.5s ease-out forwards;
+    opacity: 0.8;
+    filter: drop-shadow(0 2px 4px rgba(46,125,50,0.3));
+}
+
+@keyframes float {
+    0% {
+        transform: translate(-50%, 0) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(-50%, -40px) scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -80px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* 调整音符生成位置 */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2.5); /* 缩小扩散范围 */
+        opacity: 0;
+    }
+}
+        
+        .status-indicator {
+            min-height: 40px;
+            color: #666;
+            font-size: 1.5rem;
+            border-left: 4px solid var(--main-color);
+            padding-left: 15px;
+            margin-bottom: 5px;
+        }
+
+        .loading-dots::after {
+            content: '...';
+            display: inline-block;
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+		/* 新增动态反馈光效 */
+        #liveText {
+            font-size: 1.8rem;
+            color: var(--main-color);
+        }
+		
+		/* 新增样式 */
+/* 优化后的银行按钮样式 */
+.bank-btn {
+    width: 50px;   /* 原60px */
+    height: 50px;  /* 原60px */
+    border: 2px solid transparent;
+    border-radius: 10px;  /* 原12px */
+    padding: 6px;  /* 原8px */
+    transition: all 0.2s;
+    background: #f8f9fa;  /* 新增浅色背景 */
+}
+
+.bank-btn.active {
+    border-color: var(--main-color);
+    box-shadow: 0 1px 4px rgba(46,125,50,0.2);  /* 减弱阴影 */
+    background: white;  /* 激活时白色背景 */
+}
+
+.bank-btn img {
+    transition: transform 0.2s;  /* 添加图标动效 */
+}
+
+.bank-btn:hover img {
+    transform: scale(1.1);
+}
+
+.quick-service-btn {
+    width: 100%;
+    height: 100px;
+    border: none;
+    border-radius: 15px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.quick-service-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+    /* 常用业务独立样式 */
+    .quick-service-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
+        border: 2px solid var(--secondary-color);
+        border-radius: 12px;
+        padding: 15px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .quick-service-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(56,142,60,0.15);
+    }
+    .quick-service-card i {
+        font-size: 1.8rem;
+        color: var(--main-color);
+        margin-bottom: 8px;
+    }
+
+.transfer-target-btn {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+.transfer-target-btn:hover {
+    background: #f8f9fa;
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+}
+.text-pink { color: #ff69b4; }
+.text-purple { color: #6f42c1; }
+
+/* 自定义工具提示样式 */
+.tooltip-inner {
+    background-color: var(--main-color);
+    color: white;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: var(--main-color);
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1><i class="fas fa-university me-2"></i>银发银行助手</h1>
+            <p class="lead">请用说出您的需求</p>
+        </div>
+
+
+
+        <!-- 语音操作区 -->
+        <div class="text-center mb-3">
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label for="langSelect" class="form-label fs-4"><i class="fas fa-language me-2"></i>识别语言</label>
+                    <select id="langSelect" class="form-select form-select-lg">
+                        <option value="auto">自动识别方言</option>
+                        <option value="zh-CN">普通话</option>
+                        <option value="wuu-Sha">上海话</option>
+                        <option value="yue">粤语</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <div class="bank-selector">
+                        <label class="form-label fs-5"><i class="fas fa-university me-2"></i>选择银行</label>
+                        <div class="d-flex flex-wrap gap-1">
+                            <button class="bank-btn active" data-bank="icbc" title="中国工商银行">
+                                <img src="pic/银行-工商.png" alt="中国工商银行" width="30">
+                            </button>
+                            <button class="bank-btn" data-bank="abc" title="中国农业银行">
+                                <img src="pic/银行-农行.png" alt="中国农业银行" width="30">
+                            </button>
+                            <button class="bank-btn" data-bank="abc" title="中国银行">
+                                <img src="pic/中国银行.png" alt="中国银行" width="30">
+                            </button>
+                            <button class="bank-btn" data-bank="abc" title="中国建设银行">
+                                <img src="pic/建设银行.png" alt="中国建设银行" width="30">
+                            </button>
+                            <button class="bank-btn" data-bank="abc" title="交通银行">
+                                <img src="pic/银行-交通银行.png" alt="交通银行" width="30">
+                            </button>
+                            <button class="bank-btn" data-bank="abc" title="中国邮政储蓄银行">
+                                <img src="pic/中国邮政储蓄银行.png" alt="中国邮政储蓄银行" width="30">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-container position-relative d-inline-block">
+                <div class="notes-container"></div>
+                <button id="micButton" class="mic-btn">
+                    <img src="pic/麦克风,录音.png" width="60" height="60">
+                </button>
+            </div>
+        </div>
+
+
+        <!-- 结果展示 -->
+        <div class="result-box">
+            <div id="statusText" class="status-indicator"></div>
+            <div id="resultText" class="text-start">
+                <p class="text-muted fs-5 mb-0">识别结果将显示在此处</p>
+            </div>
+        </div>
+
+        <!-- 在现有服务卡片后添加常用业务快速入口 -->
+        <!-- 在现有服务卡片后添加常用业务快速入口 -->
+<div class="row g-2 mb-4">
+    <div class="col-4">
+        <button class="quick-service-btn" data-service="balance">
+            <i class="fas fa-wallet fs-2"></i>
+            <span>查余额</span>
+        </button>
+    </div>
+    <div class="col-4">
+        <button class="quick-service-btn" data-service="transfer" data-bs-toggle="modal" data-bs-target="#transferModal">
+            <i class="fas fa-money-bill-wave fs-2"></i>
+            <span>转账</span>
+        </button>
+    </div>
+    <div class="col-4">
+        <button class="quick-service-btn" data-service="pension">
+            <i class="fas fa-piggy-bank fs-2"></i>
+            <span>养老金</span>
+        </button>
+    </div>
+</div>
+		
+        <!-- 服务指南 -->
+<div class="service-section">
+        <div class="row g-4 mb-4">
+            <h3>服务指南</h3> <!-- 添加标题“服务指南” -->
+            <div class="col-md-2">
+                <div class="service-card" data-service="e支付">
+                    <div class="text-center">
+                        <i class="fas fa-mobile-alt fa-3x text-success mb-3"></i>
+                        <h4 class="mb-2 fs-3">e支付</h4>
+                        <a href="讲解页面.html" target="_blank">
+                            <button type="button" class="btn btn-sm btn-primary">点击听取指南-></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="service-card" data-service="养老金融">
+                    <div class="text-center">
+                        <i class="fas fa-user-clock fa-3x text-primary mb-3"></i>
+                        <h4 class="mb-2 fs-3">养老金融</h4>
+                        <a href="讲解页面.html" target="_blank">
+                            <button type="button" class="btn btn-sm btn-primary">点击听取指南-></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="service-card" data-service="信用卡管家">
+                    <div class="text-center">
+                        <i class="fas fa-credit-card fa-3x text-warning mb-3"></i>
+                        <h4 class="mb-2 fs-3">信用卡管家</h4>
+                        <a href="讲解页面.html" target="_blank">
+                            <button type="button" class="btn btn-sm btn-primary">点击听取指南-></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="service-card" data-service="环球通">
+                    <div class="text-center">
+                        <i class="fas fa-globe fa-3x text-success mb-3"></i>
+                        <h4 class="mb-2 fs-3">环球通</h4>
+                        <a href="讲解页面.html" target="_blank">
+                            <button type="button" class="btn btn-sm btn-primary">点击听取指南-></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="service-card" data-service="理财产品">
+                    <div class="text-center">
+                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                        <h4 class="mb-2 fs-3">理财产品</h4>
+                        <a href="讲解页面.html" target="_blank">
+                            <button type="button" class="btn btn-sm btn-primary">点击听取指南-></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="service-card" data-service="保险服务">
+                    <div class="text-center">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h4 class="mb-2 fs-3" target="_blank">保险服务</h4>
+                        <a href="讲解页面.html">
+                            <button type="button" class="btn btn-sm btn-primary">点击听取指南-></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        <!-- 帮助按钮 -->
+        <div class="help-bubble" data-bs-toggle="tooltip" title="语音帮助">
+            <i class="fas fa-hands-helping fa-lg text-white"></i>
+        </div>
+        
+        <!-- 转账对象选择模态框 -->
+        <div class="modal fade" id="transferModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-people me-2"></i>选择转账对象</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- 女性成员 -->
+                            <div class="col-6">
+                                <button class="transfer-target-btn d-flex flex-column align-items-center w-100 p-3">
+                                    <i class="bi bi-person-hearts fs-2 text-pink"></i>
+                                    <span class="mt-2">女儿</span>
+                                </button>
+                            </div>
+                            <!-- 男性成员 -->
+                            <div class="col-6">
+                                <button class="transfer-target-btn d-flex flex-column align-items-center w-100 p-3">
+                                    <i class="bi bi-person-arms-up fs-2 text-primary"></i>
+                                    <span class="mt-2">儿子</span>
+                                </button>
+                            </div>
+                            <!-- 其他成员（示例两个） -->
+                            <div class="col-6">
+                                <button class="transfer-target-btn d-flex flex-column align-items-center w-100 p-3">
+                                    <i class="bi bi-person-check fs-2 text-purple"></i>
+                                    <span class="mt-2">姐姐</span>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="transfer-target-btn d-flex flex-column align-items-center w-100 p-3">
+                                    <i class="bi bi-person-video2 fs-2 text-success"></i>
+                                    <span class="mt-2">妹妹</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="bootstrap/jquery.min.js"></script>
+    <script src="bootstrap/bootstrap.bundle.min.js"></script>
+    <script>
+        // 检查是否是移动设备
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+let mediaRecorder, recognition, notesInterval, circleInterval;
+
+// 初始化语音识别
+function initRecognition() {
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'zh-CN';
+
+    recognition.onstart = () => {
+        $('#statusText').html('<span class="text-success"><i class="fas fa-microphone me-2"></i>正在聆听中...</span>').show();
+    };
+
+    recognition.onresult = (event) => {
+        let interim = '', final = '';
+        Array.from(event.results).forEach((result, index) => {
+            const transcript = result[0].transcript;
+            result.isFinal? final += transcript : interim += transcript;
+        });
+
+        if (interim) {
+            $('#statusText').html(`<span class="text-primary"><i class="fas fa-comment-dots me-2"></i>识别中：${interim}</span>`);
+        }
+        if (final) {
+            $('#resultText').prepend(`<div class="mb-3 p-3 bg-light rounded"><i class="fas fa-check-circle text-success me-2"></i>${final}</div>`);
+            processCommand(final);
+        }
+    };
+
+    recognition.onerror = (event) => {
+        $('#statusText').html('<span class="text-danger"><i class="fas fa-times-circle me-2"></i>识别错误，请重试</span>');
+    };
+
+    recognition.onend = () => {
+        $('#statusText').hide();
+    };
+}
+
+// 银行切换逻辑
+function handleBankSwitch() {
+    $('.bank-btn').click(function () {
+        $('.bank-btn').removeClass('active');
+        $(this).addClass('active');
+        const bank = $(this).data('bank');
+        // 执行银行切换逻辑
+    });
+}
+
+// 业务处理
+function processCommand(text) {
+    const commands = {
+        '转账': () => showGuide('转账', '请说出收款人姓名和金额'),
+        '余额': () => showGuide('余额查询', '您的当前余额为：****元'),
+        '账单': () => showGuide('账单查询', '正在查询最近三笔交易...')
+    };
+
+    Object.keys(commands).forEach(key => {
+        if (text.includes(key)) commands[key]();
+    });
+
+    // 新增银行识别
+    const banks = {
+        '工商银行': 'icbc',
+        '农业银行': 'abc',
+        // 其他银行
+    };
+    Object.keys(banks).forEach(name => {
+        if (text.includes(name)) {
+            $(`.bank-btn[data-bank="${banks[name]}"]`).click();
+        }
+    });
+}
+
+// 转账对象选择处理
+function handleTransferTargetSelection() {
+    $('.transfer-target-btn').click(function () {
+        const target = $(this).find('span').text();
+        $('#transferModal').modal('hide');
+        showGuide('转账', `请说出要给${target}转账的金额`);
+    });
+}
+
+// 显示指南信息
+function showGuide(title, content) {
+    $('#resultText').prepend(`
+        <div class="alert alert-success">
+            <h5><i class="fas fa-info-circle me-2"></i>${title}</h5>
+            <p class="mb-0">${content}</p>
+        </div>
+    `);
+}
+
+// 业务指南语音
+function handleServiceCardClick() {
+    $('.service-card').click(function () {
+        const service = $(this).data('service');
+        const guideText = {
+            '转账': '请先说出对方账户号码，然后说出转账金额',
+            '查询余额': '请说出需要查询的账户号码',
+            '账单查询': '请说出要查询的月份，例如2023年10月'
+        }[service];
+
+        if (window.speechSynthesis) {
+            const utterance = new SpeechSynthesisUtterance(guideText);
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+        }
+    });
+}
+
+// 录音控制
+async function startRecording() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+
+        // 启动动画
+        circleInterval = setInterval(() => {
+            $('.button-container').append($('<div class="circle-effect">'));
+        }, 1000);
+
+        // 修正后的音符生成函数
+        function createNotes() {
+            const positions = [-30, 0, 30]; // 调整横向偏移量
+            positions.forEach(pos => {
+                const note = $(`<div class="note" style="left:calc(50% + ${pos}px)">`);
+                $('.notes-container').append(note);
+                note.on('animationend', () => note.remove());
+            });
+        }
+
+        notesInterval = setInterval(createNotes, 600); // 降低生成频率
+
+        mediaRecorder.start();
+        recognition.start();
+
+    } catch (error) {
+        $('#statusText').html('<span class="text-danger"><i class="fas fa-microphone-slash me-2"></i>麦克风访问被拒绝</span>').show();
+    }
+}
+
+function stopRecording() {
+    clearInterval(notesInterval);
+    clearInterval(circleInterval);
+    $('.circle-effect, .note').remove();
+    if (mediaRecorder) mediaRecorder.stop();
+    if (recognition) recognition.stop();
+}
+
+function handleQuickServiceBtnClick() {
+    $('.quick-service-btn').click(function () {
+        const service = $(this).data('service');
+        let title = '', content = '', alertClass = 'alert-info';
+
+        switch (service) {
+            case 'balance':
+                title = '余额查询';
+                content = '您的当前余额为：****元';
+                alertClass = 'alert-info'; // 余额查询使用成功提示框颜色
+                break;
+            case 'pension':
+                title = '养老金查询';
+                content = '本月养老金已到账：****元';
+                alertClass = 'alert-warning'; // 养老金查询使用警告提示框颜色
+                break;
+            case 'transfer':
+                // 转账按钮已有模态框处理
+                return;
+        }
+
+        $('#resultText').prepend(`
+            <div class="alert ${alertClass}">
+                <h5><i class="fas fa-info-circle me-2"></i>${title}</h5>
+                <p class="mb-0">${content}</p>
+            </div>
+        `);
+
+        // 语音反馈
+        if (window.speechSynthesis) {
+            const utterance = new SpeechSynthesisUtterance(content);
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+        }
+    });
+}
+
+// 初始化工具提示
+function initTooltips() {
+    $(document).ready(function () {
+        $('[title]').tooltip({
+            trigger: 'hover',  // 仅在悬停时显示
+            placement: 'top',  // 提示显示在按钮上方
+            container: 'body'  // 提示附加到body避免布局错乱
+        });
+    });
+
+    // 初始化工具提示
+    $('[data-bs-toggle="tooltip"]').tooltip();
+}
+
+// 事件绑定
+$(document).ready(() => {
+    initRecognition();
+    $('#langSelect').change(() => {
+        recognition.lang = $('#langSelect').val() === 'auto' ? 'zh-CN' : $('#langSelect').val();
+    });
+
+    if (isMobile) {
+        let pressTimer;
+        $('#micButton').on('touchstart', e => {
+            e.preventDefault();
+            pressTimer = setTimeout(startRecording, 500);
+        }).on('touchend', () => {
+            clearTimeout(pressTimer);
+            stopRecording();
+        });
+    } else {
+        $('#micButton').click(function () {
+            $(this).hasClass('recording') ? stopRecording() : startRecording();
+            $(this).toggleClass('recording');
+        });
+    }
+
+    handleBankSwitch();
+    handleTransferTargetSelection();
+    handleServiceCardClick();
+    handleQuickServiceBtnClick();
+    initTooltips();
+});
+    </script>
+</body>
+</html>
