@@ -116,6 +116,47 @@
             font-size: 1rem;
 			color:#009900;
         }
+		
+		/* 美化后的返回按钮样式 */
+.return-home-btn {
+    position: fixed;
+    left: 20px;
+    top: 10%;
+    transform: translateY(-50%);
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #6c5ce7, #8577ef);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: grab;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .return-home-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        background: linear-gradient(135deg, #5c4fe6, #786be9);
+    }
+
+    .return-home-btn:active {
+        cursor: grabbing;
+        transform: scale(0.98);
+    }
+
+    .return-home-btn i {
+        font-size: 1.2em;
+        transition: transform 0.2s;
+    }
+
+    .return-home-btn:hover i {
+        transform: translateX(-3px);
+    }
     </style>
 </head>
 
@@ -304,13 +345,19 @@
                 </div>
             </div>
         </div>
+        
     </div>
+    <a href="语音识别2.0.html" target="_blank" style="display: inline-block;">
+      <button class="return-home-btn">
+          <i class="bi bi-arrow-left-circle"></i>
+          返回首页
+      </button>
+  </a>
 
     <!-- 保留之前的语音脚本 -->
     <script>
         let currentSpeech = null;
-
-        function speak(button) {
+	        function speak(button) {
             // 这里代码有误，原代码中没有.explain-text类，修改为选择p标签
             const text = button.closest('.service-card').querySelector('p').innerText;
             const icon = button.querySelector('i');
@@ -348,5 +395,4 @@
         }
     </script>
 </body>
-
 </html>
