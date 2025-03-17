@@ -572,238 +572,247 @@
 
     <script src="bootstrap/jquery.min.js"></script>
     <script src="bootstrap/bootstrap.bundle.min.js"></script>
-    <script>
-        // 检查是否是移动设备
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-let mediaRecorder, recognition, notesInterval, circleInterval;
+<script>
+    // 检查是否是移动设备
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+    let mediaRecorder, recognition, notesInterval, circleInterval;
 
-// 初始化语音识别
-function initRecognition() {
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'zh-CN';
+    // 初始化语音识别
+    function initRecognition() {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'zh-CN';
 
-    recognition.onstart = () => {
-        $('#statusText').html('<span class="text-success"><i class="fas fa-microphone me-2"></i>正在聆听中...</span>').show();
-    };
+        recognition.onstart = () => {
+            $('#statusText').html('<span class="text-success"><i class="fas fa-microphone me-2"></i>正在聆听中...</span>').show();
+        };
 
-    recognition.onresult = (event) => {
-        let interim = '', final = '';
-        Array.from(event.results).forEach((result, index) => {
-            const transcript = result[0].transcript;
-            result.isFinal? final += transcript : interim += transcript;
+        recognition.onresult = (event) => {
+            let interim = '', final = '';
+            Array.from(event.results).forEach((result, index) => {
+                const transcript = result[0].transcript;
+                result.isFinal? final += transcript : interim += transcript;
+            });
+
+            if (interim) {
+                $('#statusText').html(`<span class="text-primary"><i class="fas fa-comment-dots me-2"></i>识别中：${interim}</span>`);
+            }
+            if (final) {
+                $('#resultText').prepend(`<div class="mb-3 p-3 bg-light rounded"><i class="fas fa-check-circle text-success me-2"></i>${final}</div>`);
+                processCommand(final);
+            }
+        };
+
+        recognition.onerror = (event) => {
+            $('#statusText').html('<span class="text-danger"><i class="fas fa-times-circle me-2"></i>识别错误，请重试</span>');
+            console.error('语音识别错误:', event.error);
+        };
+
+        recognition.onend = () => {
+            $('#statusText').hide();
+        };
+    }
+
+    // 银行切换逻辑
+    function handleBankSwitch() {
+        $('.bank-btn').click(function () {
+            $('.bank-btn').removeClass('active');
+            $(this).addClass('active');
+            const bank = $(this).data('bank');
+            // 执行银行切换逻辑
+        });
+    }
+
+    // 业务处理
+    function processCommand(text) {
+        const commands = {
+            '转账': () => showGuide('转账', '请说出收款人姓名和金额'),
+            '余额': () => showGuide('余额查询', '您的当前余额为：****元'),
+            '账单': () => showGuide('账单查询', '正在查询最近三笔交易...')
+        };
+
+        Object.keys(commands).forEach(key => {
+            if (text.includes(key)) commands[key]();
         });
 
-        if (interim) {
-            $('#statusText').html(`<span class="text-primary"><i class="fas fa-comment-dots me-2"></i>识别中：${interim}</span>`);
-        }
-        if (final) {
-            $('#resultText').prepend(`<div class="mb-3 p-3 bg-light rounded"><i class="fas fa-check-circle text-success me-2"></i>${final}</div>`);
-            processCommand(final);
-        }
-    };
-
-    recognition.onerror = (event) => {
-        $('#statusText').html('<span class="text-danger"><i class="fas fa-times-circle me-2"></i>识别错误，请重试</span>');
-    };
-
-    recognition.onend = () => {
-        $('#statusText').hide();
-    };
-}
-
-// 银行切换逻辑
-function handleBankSwitch() {
-    $('.bank-btn').click(function () {
-        $('.bank-btn').removeClass('active');
-        $(this).addClass('active');
-        const bank = $(this).data('bank');
-        // 执行银行切换逻辑
-    });
-}
-
-// 业务处理
-function processCommand(text) {
-    const commands = {
-        '转账': () => showGuide('转账', '请说出收款人姓名和金额'),
-        '余额': () => showGuide('余额查询', '您的当前余额为：****元'),
-        '账单': () => showGuide('账单查询', '正在查询最近三笔交易...')
-    };
-
-    Object.keys(commands).forEach(key => {
-        if (text.includes(key)) commands[key]();
-    });
-
-    // 新增银行识别
-    const banks = {
-        '工商银行': 'icbc',
-        '农业银行': 'abc',
-        // 其他银行
-    };
-    Object.keys(banks).forEach(name => {
-        if (text.includes(name)) {
-            $(`.bank-btn[data-bank="${banks[name]}"]`).click();
-        }
-    });
-}
-
-// 转账对象选择处理
-function handleTransferTargetSelection() {
-    $('.transfer-target-btn').click(function () {
-        const target = $(this).find('span').text();
-        $('#transferModal').modal('hide');
-        showGuide('转账', `请说出要给${target}转账的金额`);
-    });
-}
-
-// 显示指南信息
-function showGuide(title, content) {
-    $('#resultText').prepend(`
-        <div class="alert alert-success">
-            <h5><i class="fas fa-info-circle me-2"></i>${title}</h5>
-            <p class="mb-0">${content}</p>
-        </div>
-    `);
-}
-
-// 业务指南语音
-function handleServiceCardClick() {
-    $('.service-card').click(function () {
-        const service = $(this).data('service');
-        const guideText = {
-            '转账': '请先说出对方账户号码，然后说出转账金额',
-            '查询余额': '请说出需要查询的账户号码',
-            '账单查询': '请说出要查询的月份，例如2023年10月'
-        }[service];
-
-        if (window.speechSynthesis) {
-            const utterance = new SpeechSynthesisUtterance(guideText);
-            utterance.rate = 0.9;
-            speechSynthesis.speak(utterance);
-        }
-    });
-}
-
-// 录音控制
-async function startRecording() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-
-        // 启动动画
-        circleInterval = setInterval(() => {
-            $('.button-container').append($('<div class="circle-effect">'));
-        }, 1000);
-
-        // 修正后的音符生成函数
-        function createNotes() {
-            const positions = [-30, 0, 30]; // 调整横向偏移量
-            positions.forEach(pos => {
-                const note = $(`<div class="note" style="left:calc(50% + ${pos}px)">`);
-                $('.notes-container').append(note);
-                note.on('animationend', () => note.remove());
-            });
-        }
-
-        notesInterval = setInterval(createNotes, 600); // 降低生成频率
-
-        mediaRecorder.start();
-        recognition.start();
-
-    } catch (error) {
-        $('#statusText').html('<span class="text-danger"><i class="fas fa-microphone-slash me-2"></i>麦克风访问被拒绝</span>').show();
+        // 新增银行识别
+        const banks = {
+            '工商银行': 'icbc',
+            '农业银行': 'abc',
+            // 其他银行
+        };
+        Object.keys(banks).forEach(name => {
+            if (text.includes(name)) {
+                $(`.bank-btn[data-bank="${banks[name]}"]`).click();
+            }
+        });
     }
-}
 
-function stopRecording() {
-    clearInterval(notesInterval);
-    clearInterval(circleInterval);
-    $('.circle-effect, .note').remove();
-    if (mediaRecorder) mediaRecorder.stop();
-    if (recognition) recognition.stop();
-}
+    // 转账对象选择处理
+    function handleTransferTargetSelection() {
+        $('.transfer-target-btn').click(function () {
+            const target = $(this).find('span').text();
+            $('#transferModal').modal('hide');
+            showGuide('转账', `请说出要给${target}转账的金额`);
+        });
+    }
 
-function handleQuickServiceBtnClick() {
-    $('.quick-service-btn').click(function () {
-        const service = $(this).data('service');
-        let title = '', content = '', alertClass = 'alert-info';
-
-        switch (service) {
-            case 'balance':
-                title = '余额查询';
-                content = '您的当前余额为：****元';
-                alertClass = 'alert-info'; // 余额查询使用成功提示框颜色
-                break;
-            case 'pension':
-                title = '养老金查询';
-                content = '本月养老金已到账：****元';
-                alertClass = 'alert-warning'; // 养老金查询使用警告提示框颜色
-                break;
-            case 'transfer':
-                // 转账按钮已有模态框处理
-                return;
-        }
-
+    // 显示指南信息
+    function showGuide(title, content) {
         $('#resultText').prepend(`
-            <div class="alert ${alertClass}">
+            <div class="alert alert-success">
                 <h5><i class="fas fa-info-circle me-2"></i>${title}</h5>
                 <p class="mb-0">${content}</p>
             </div>
         `);
+    }
 
-        // 语音反馈
-        if (window.speechSynthesis) {
-            const utterance = new SpeechSynthesisUtterance(content);
-            utterance.rate = 0.9;
-            speechSynthesis.speak(utterance);
-        }
-    });
-}
+    // 业务指南语音
+    function handleServiceCardClick() {
+        $('.service-card').click(function () {
+            const service = $(this).data('service');
+            const guideText = {
+                '转账': '请先说出对方账户号码，然后说出转账金额',
+                '查询余额': '请说出需要查询的账户号码',
+                '账单查询': '请说出要查询的月份，例如2023年10月'
+            }[service];
 
-// 初始化工具提示
-function initTooltips() {
-    $(document).ready(function () {
-        $('[title]').tooltip({
-            trigger: 'hover',  // 仅在悬停时显示
-            placement: 'top',  // 提示显示在按钮上方
-            container: 'body'  // 提示附加到body避免布局错乱
-        });
-    });
-
-    // 初始化工具提示
-    $('[data-bs-toggle="tooltip"]').tooltip();
-}
-
-// 事件绑定
-$(document).ready(() => {
-    initRecognition();
-    $('#langSelect').change(() => {
-        recognition.lang = $('#langSelect').val() === 'auto' ? 'zh-CN' : $('#langSelect').val();
-    });
-
-    if (isMobile) {
-        let pressTimer;
-        $('#micButton').on('touchstart', e => {
-            e.preventDefault();
-            pressTimer = setTimeout(startRecording, 500);
-        }).on('touchend', () => {
-            clearTimeout(pressTimer);
-            stopRecording();
-        });
-    } else {
-        $('#micButton').click(function () {
-            $(this).hasClass('recording') ? stopRecording() : startRecording();
-            $(this).toggleClass('recording');
+            if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(guideText);
+                utterance.rate = 0.9;
+                speechSynthesis.speak(utterance);
+            }
         });
     }
 
-    handleBankSwitch();
-    handleTransferTargetSelection();
-    handleServiceCardClick();
-    handleQuickServiceBtnClick();
-    initTooltips();
-});
-    </script>
+    // 录音控制
+    async function startRecording() {
+        try {
+            console.log('尝试访问麦克风...');
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log('成功访问麦克风');
+            mediaRecorder = new MediaRecorder(stream);
+
+            // 启动动画
+            circleInterval = setInterval(() => {
+                $('.button-container').append($('<div class="circle-effect">'));
+            }, 1000);
+
+            // 修正后的音符生成函数
+            function createNotes() {
+                const positions = [-30, 0, 30]; // 调整横向偏移量
+                positions.forEach(pos => {
+                    const note = $(`<div class="note" style="left:calc(50% + ${pos}px)">`);
+                    $('.notes-container').append(note);
+                    note.on('animationend', () => note.remove());
+                });
+            }
+
+            notesInterval = setInterval(createNotes, 600); // 降低生成频率
+
+            mediaRecorder.start();
+            recognition.start();
+
+        } catch (error) {
+            console.error('麦克风访问错误:', error);
+            $('#statusText').html('<span class="text-danger"><i class="fas fa-microphone-slash me-2"></i>麦克风访问被拒绝</span>').show();
+        }
+    }
+
+    function stopRecording() {
+        clearInterval(notesInterval);
+        clearInterval(circleInterval);
+        $('.circle-effect, .note').remove();
+        if (mediaRecorder) mediaRecorder.stop();
+        if (recognition) recognition.stop();
+    }
+
+    function handleQuickServiceBtnClick() {
+        $('.quick-service-btn').click(function () {
+            const service = $(this).data('service');
+            let title = '', content = '', alertClass = 'alert-info';
+
+            switch (service) {
+                case 'balance':
+                    title = '余额查询';
+                    content = '您的当前余额为：****元';
+                    alertClass = 'alert-info'; // 余额查询使用成功提示框颜色
+                    break;
+                case 'pension':
+                    title = '养老金查询';
+                    content = '本月养老金已到账：****元';
+                    alertClass = 'alert-warning'; // 养老金查询使用警告提示框颜色
+                    break;
+                case 'transfer':
+                    // 转账按钮已有模态框处理
+                    return;
+            }
+
+            $('#resultText').prepend(`
+                <div class="alert ${alertClass}">
+                    <h5><i class="fas fa-info-circle me-2"></i>${title}</h5>
+                    <p class="mb-0">${content}</p>
+                </div>
+            `);
+
+            // 语音反馈
+            if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(content);
+                utterance.rate = 0.9;
+                speechSynthesis.speak(utterance);
+            }
+        });
+    }
+
+    // 初始化工具提示
+    function initTooltips() {
+        $(document).ready(function () {
+            $('[title]').tooltip({
+                trigger: 'hover',  // 仅在悬停时显示
+                placement: 'top',  // 提示显示在按钮上方
+                container: 'body'  // 提示附加到body避免布局错乱
+            });
+        });
+
+        // 初始化工具提示
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    // 事件绑定
+    $(document).ready(() => {
+        initRecognition();
+        $('#langSelect').change(() => {
+            recognition.lang = $('#langSelect').val() === 'auto' ? 'zh-CN' : $('#langSelect').val();
+        });
+
+        if (isMobile) {
+            let pressTimer;
+            $('#micButton').on('touchstart', e => {
+                e.preventDefault();
+                console.log('触摸开始，准备启动录音');
+                pressTimer = setTimeout(() => {
+                    console.log('长按触发，开始录音');
+                    startRecording();
+                }, 500);
+            }).on('touchend', () => {
+                console.log('触摸结束，停止录音');
+                clearTimeout(pressTimer);
+                stopRecording();
+            });
+        } else {
+            $('#micButton').click(function () {
+                $(this).hasClass('recording') ? stopRecording() : startRecording();
+                $(this).toggleClass('recording');
+            });
+        }
+
+        handleBankSwitch();
+        handleTransferTargetSelection();
+        handleServiceCardClick();
+        handleQuickServiceBtnClick();
+        initTooltips();
+    });
+</script>
 </body>
 </html>
